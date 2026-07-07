@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+@theme {
+  /* Paleta — Identidade Visual "Guia 2026: O Ano da Conquista" */
+  --color-noturno: #081E48;
+  --color-noturno-soft: #0E2A5E;
+  --color-offwhite: #FAFAFA;
+  --color-marte: #C70039;
+  --color-marte-dark: #9E0029;
+  --color-bronze: #B8860B;
+  --color-bronze-light: #F8E2A8;
+
+  /* Neutros auxiliares (sobre a base off-white / noturno) */
+  --color-ink: #1A2238;
+  --color-ink-soft: #4A5374;
+  --color-line: #E2DED4;
+
+  --font-display: "Playfair Display", "Georgia", serif;
+  --font-sans: "Open Sans", system-ui, -apple-system, sans-serif;
+
+  --radius-card: 1rem;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    background-color: var(--color-offwhite);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--color-bronze-light);
+    color: var(--color-noturno);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-bronze);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .bronze-gradient-text {
+    background-image: linear-gradient(135deg, var(--color-bronze) 0%, var(--color-bronze-light) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .bronze-rule {
+    height: 1px;
+    background: linear-gradient(90deg, var(--color-bronze) 0%, var(--color-bronze-light) 100%);
+  }
+
+  .legal-content h2 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-noturno);
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .legal-content h2:first-child {
+    margin-top: 0;
+  }
+
+  .legal-content p {
+    color: var(--color-ink-soft);
+    line-height: 1.75;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .legal-content strong {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  .legal-content a {
+    color: var(--color-marte);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.15s ease;
+  }
+
+  .legal-content a:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+@keyframes orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes orbit-spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.9; }
+}
+
+@keyframes rise-fade {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes whatsapp-ping {
+  0% { transform: scale(1); opacity: 0.5; }
+  70% { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@keyframes drift-blob-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(6%, -8%) scale(1.15); }
+  66% { transform: translate(-4%, 5%) scale(0.9); }
+}
+
+@keyframes drift-blob-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-8%, 6%) scale(1.2); }
+}
+
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /*
+   * Desliga apenas as transições/microinterações de hover e clique
+   * (rápidas, disparadas por ação do usuário) e qualquer animação de
+   * entrada de conteúdo. Os efeitos decorativos de fundo (drift dos
+   * blobs, twinkle das estrelas, órbitas, flutuação) continuam ativos
+   * porque são lentos, sutis e não envolvem o conteúdo da página —
+   * o scroll-reveal já tem seu próprio fallback via JS em useScrollReveal.
+   */
+  *, *::before, *::after {
+    transition-duration: 0.001ms !important;
+  }
+}

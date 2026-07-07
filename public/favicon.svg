@@ -1,0 +1,21 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="75%" r="75%">
+      <stop offset="0%" stop-color="#C70039" stop-opacity="0.55" />
+      <stop offset="45%" stop-color="#0E2A5E" stop-opacity="1" />
+      <stop offset="100%" stop-color="#081E48" stop-opacity="1" />
+    </radialGradient>
+    <linearGradient id="bronze" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8E2A8" />
+      <stop offset="100%" stop-color="#B8860B" />
+    </linearGradient>
+  </defs>
+
+  <rect width="64" height="64" rx="14" fill="url(#bg)" />
+
+  <!-- símbolo de Marte (♂) -->
+  <g transform="translate(15, 21)" fill="none" stroke="url(#bronze)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="13" cy="23" r="12.5" />
+    <path d="M22 14L34 2M34 2H24M34 2V12" />
+  </g>
+</svg>
