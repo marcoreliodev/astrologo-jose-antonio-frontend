@@ -1,3 +1,4 @@
+import { Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { MarsGlyph } from './CosmicPanel';
 import { useAuth } from '../context/AuthContext';
@@ -17,10 +18,10 @@ export function LandingHeader() {
 
         <nav className="flex items-center gap-2">
           <a
-            href="#livro"
+            href="#como-funciona"
             className="hidden rounded-lg px-3 py-2 text-sm font-medium text-ink-soft transition-colors hover:bg-noturno/5 hover:text-noturno sm:inline-block"
           >
-            O livro
+            Como funciona
           </a>
           <a
             href="#redes"
@@ -30,9 +31,16 @@ export function LandingHeader() {
           </a>
           <Link
             to={isAuthenticated ? '/perfil' : '/login'}
-            className="rounded-lg px-3 py-2 text-sm font-semibold text-noturno transition-colors hover:bg-noturno/5"
+            className="hidden rounded-lg px-3 py-2 text-sm font-semibold text-noturno transition-colors hover:bg-noturno/5 sm:inline-block"
           >
             {isAuthenticated ? 'Meu Perfil' : 'Entrar'}
+          </Link>
+          <Link
+            to={isAuthenticated ? '/mapa-astral' : '/cadastro'}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-marte px-4 py-2 text-sm font-semibold text-offwhite transition-all hover:bg-marte-dark active:scale-[0.99]"
+          >
+            <Sparkles size={15} />
+            Gere Seu Mapa
           </Link>
         </nav>
       </div>

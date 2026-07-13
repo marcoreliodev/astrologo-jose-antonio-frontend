@@ -1,4 +1,4 @@
-import { LogOut, ShieldCheck, UserCircle2, ScrollText } from "lucide-react";
+import { LogOut, ShieldCheck, UserCircle2, ScrollText, Sparkles, Orbit } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { MarsGlyph } from "./CosmicPanel";
 import { useAuth } from "../context/AuthContext";
@@ -23,13 +23,18 @@ export function AppHeader({ wide = false }: { wide?: boolean }) {
             </span>
           </div>
 
-          {isAdmin && (
-            <nav className="hidden items-center gap-1 sm:flex">
-              <HeaderLink to="/perfil" icon={<UserCircle2 size={15} />} label="Meu perfil" />
-              <HeaderLink to="/admin/usuarios" icon={<ShieldCheck size={15} />} label="Usuários" />
-              <HeaderLink to="/admin/logs" icon={<ScrollText size={15} />} label="Logs" />
-            </nav>
-          )}
+          <nav className="hidden items-center gap-1 sm:flex">
+            <HeaderLink to="/mapa-astral" icon={<Sparkles size={15} />} label="Gerar mapa" />
+            <HeaderLink to="/meus-mapas" icon={<Orbit size={15} />} label="Meus mapas" />
+            {isAdmin && (
+              <>
+                <HeaderLink to="/perfil" icon={<UserCircle2 size={15} />} label="Meu perfil" />
+                <HeaderLink to="/admin/usuarios" icon={<ShieldCheck size={15} />} label="Usuários" />
+                <HeaderLink to="/admin/mapas" icon={<Orbit size={15} />} label="Mapas" />
+                <HeaderLink to="/admin/logs" icon={<ScrollText size={15} />} label="Logs" />
+              </>
+            )}
+          </nav>
         </div>
 
         <div className="flex items-center gap-4">
@@ -49,13 +54,18 @@ export function AppHeader({ wide = false }: { wide?: boolean }) {
         </div>
       </div>
 
-      {isAdmin && (
-        <nav className="flex items-center gap-1 px-6 pb-3 sm:hidden">
-          <HeaderLink to="/perfil" icon={<UserCircle2 size={15} />} label="Meu perfil" />
-          <HeaderLink to="/admin/usuarios" icon={<ShieldCheck size={15} />} label="Usuários" />
-          <HeaderLink to="/admin/logs" icon={<ScrollText size={15} />} label="Logs" />
-        </nav>
-      )}
+      <nav className="flex items-center gap-1 overflow-x-auto px-6 pb-3 sm:hidden">
+        <HeaderLink to="/mapa-astral" icon={<Sparkles size={15} />} label="Gerar mapa" />
+        <HeaderLink to="/meus-mapas" icon={<Orbit size={15} />} label="Meus mapas" />
+        {isAdmin && (
+          <>
+            <HeaderLink to="/perfil" icon={<UserCircle2 size={15} />} label="Meu perfil" />
+            <HeaderLink to="/admin/usuarios" icon={<ShieldCheck size={15} />} label="Usuários" />
+            <HeaderLink to="/admin/mapas" icon={<Orbit size={15} />} label="Mapas" />
+            <HeaderLink to="/admin/logs" icon={<ScrollText size={15} />} label="Logs" />
+          </>
+        )}
+      </nav>
     </header>
   );
 }
