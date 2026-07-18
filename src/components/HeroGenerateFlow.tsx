@@ -53,7 +53,7 @@ export function HeroGenerateFlow({ onGenerated }: { onGenerated: (chart: AstralC
 
   const registerMutation = useMutation({
     mutationFn: (values: AccountStepValues) =>
-    registerRequest({ ...values, phone: values.phone ?? "", acceptedTermsAt: new Date().toISOString() }),
+    registerRequest({ ...values, phone: values.phone ?? "" }),
     onSuccess: (authResponse, values) => {
       signIn(authResponse);
       birthForm.setValue("name", values.name);

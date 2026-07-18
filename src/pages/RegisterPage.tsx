@@ -32,7 +32,7 @@ export default function RegisterPage() {
 
   const mutation = useMutation({
     mutationFn: (values: RegisterFormValues) =>
-    registerRequest({ ...values, phone: values.phone ?? "", acceptedTermsAt: new Date().toISOString() }),
+    registerRequest({ ...values, phone: values.phone ?? "" }),
     onSuccess: (data) => {
       signIn(data);
       navigate("/mapa-astral", { replace: true });
