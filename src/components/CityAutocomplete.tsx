@@ -7,10 +7,12 @@ import type { CityOption } from "../types/charts";
 export function CityAutocomplete({
   value,
   onSelect,
+  onClear,
   error,
 }: {
   value: string;
   onSelect: (city: CityOption) => void;
+  onClear?: () => void;
   error?: string;
 }) {
   const fieldId = useId();
@@ -63,6 +65,7 @@ export function CityAutocomplete({
           onChange={(event) => {
             setQuery(event.target.value);
             setOpen(true);
+            onClear?.();
           }}
           onFocus={() => setOpen(true)}
           aria-invalid={Boolean(error)}

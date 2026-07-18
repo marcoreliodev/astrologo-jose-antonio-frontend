@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Search, ShieldAlert, Sparkles, Trash2 } from "lucide-react";
-import { AppHeader } from "../components/AppHeader";
+import { LandingHeader } from "../components/LandingHeader";
+import { AdminSubNav } from "../components/AdminSubNav";
 import { AlertBanner } from "../components/AlertBanner";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { MarsGlyph } from "../components/CosmicPanel";
@@ -34,7 +35,8 @@ export default function AdminChartsPage() {
 
   return (
     <div className="min-h-screen bg-offwhite">
-      <AppHeader wide />
+      <LandingHeader />
+      <AdminSubNav />
 
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="mb-8">

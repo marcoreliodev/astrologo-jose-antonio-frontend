@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Plus, ShieldAlert, Sparkles } from "lucide-react";
-import { AppHeader } from "../components/AppHeader";
+import { LandingHeader } from "../components/LandingHeader";
 import { ChartCard } from "../components/ChartCard";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { AlertBanner } from "../components/AlertBanner";
@@ -34,7 +34,7 @@ export default function MeusMapasPage() {
 
   return (
     <div className="min-h-screen bg-offwhite">
-      <AppHeader />
+      <LandingHeader />
 
       <main className="mx-auto max-w-5xl px-6 py-10">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">

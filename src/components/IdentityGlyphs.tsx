@@ -67,35 +67,3 @@ export function DiagonalLinesGlyph({ className, style }: GlyphProps) {
     </svg>
   );
 }
-
-/** Sistema solar com órbitas elípticas inclinadas */
-export function OrbitSystemGlyph({ className, style }: GlyphProps) {
-  return (
-    <svg
-      viewBox="0 0 220 200"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      style={style}
-      aria-hidden
-    >
-      {/* órbitas elípticas inclinadas */}
-      <ellipse cx="110" cy="100" rx="105" ry="38" stroke="currentColor" strokeWidth="0.8"
-        transform="rotate(-18 110 100)" />
-      <ellipse cx="110" cy="100" rx="78" ry="28" stroke="currentColor" strokeWidth="0.8"
-        transform="rotate(-18 110 100)" />
-      <ellipse cx="110" cy="100" rx="52" ry="18" stroke="currentColor" strokeWidth="0.8"
-        transform="rotate(-18 110 100)" />
-      <ellipse cx="110" cy="100" rx="28" ry="10" stroke="currentColor" strokeWidth="0.8"
-        transform="rotate(-18 110 100)" />
-      {/* centro / sol */}
-      <circle cx="110" cy="100" r="5" stroke="currentColor" strokeWidth="0.9" />
-      {/* planetas nos pontos das órbitas */}
-      <circle cx="204" cy="87" r="3.5" stroke="currentColor" strokeWidth="0.8" />
-      <circle cx="16" cy="113" r="2.5" stroke="currentColor" strokeWidth="0.8" />
-      <circle cx="178" cy="73" r="2" stroke="currentColor" strokeWidth="0.8" />
-      {/* linha de referência / eixo */}
-      <line x1="55" y1="170" x2="95" y2="110" stroke="currentColor" strokeWidth="0.8" />
-    </svg>
-  );
-}

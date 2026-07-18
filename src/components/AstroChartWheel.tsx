@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { Chart } from '@astrodraw/astrochart';
 import { AlertTriangle } from 'lucide-react';
 import type { ChartData } from '../types/charts';
@@ -50,8 +50,29 @@ export function AstroChartWheel({
 }) {
   const rawId = useId();
   const containerId = `astro-chart-${rawId.replace(/[^a-zA-Z0-9]/g, '')}`;
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [drawError, setDrawError] = useState<string | null>(null);
+  const [drawSize, setDrawSize] = useState(size);
+
+  useLayoutEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
+    const updateSize = (width: number) => {
+      const next = Math.max(260, Math.min(size, Math.floor(width)));
+      setDrawSize((current) => (current === next ? current : next));
+    };
+
+    updateSize(wrapper.getBoundingClientRect().width);
+
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect.width;
+      if (width) updateSize(width);
+    });
+    observer.observe(wrapper);
+    return () => observer.disconnect();
+  }, [size]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -85,7 +106,7 @@ export function AstroChartWheel({
         throw new Error('Dados de casas incompletos para desenhar o mapa.');
       }
 
-      const chart = new Chart(containerId, size, size, {
+      const chart = new Chart(containerId, drawSize, drawSize, {
         COLOR_BACKGROUND: 'transparent',
         POINTS_COLOR: '#1A2238',
         SIGNS_COLOR: '#081E48',
@@ -135,15 +156,15 @@ export function AstroChartWheel({
           : 'Não foi possível desenhar o mapa astral.';
       queueMicrotask(() => setDrawError(message));
     }
-  }, [chartData, containerId, size]);
+  }, [chartData, containerId, drawSize]);
 
   return (
     <div className="flex flex-col items-center gap-3 py-2">
-      <div className="flex w-full items-center justify-center overflow-x-auto">
+      <div ref={wrapperRef} className="flex w-full items-center justify-center">
         <div
           id={containerId}
           ref={containerRef}
-          style={{ width: size, height: size, minWidth: size }}
+          style={{ width: drawSize, height: drawSize }}
         />
       </div>
       {drawError && (

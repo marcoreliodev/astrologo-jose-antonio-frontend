@@ -13,6 +13,33 @@ export const SIGN_LABELS: Record<string, string> = {
   Pisces: "Peixes",
 };
 
+/** Pequeno resumo do signo solar, exibido no resultado do mapa astral. */
+export const SIGN_DESCRIPTIONS: Record<string, string> = {
+  Aries:
+    "Signo de fogo regido por Marte. Áries carrega energia pioneira, coragem e impulso para agir primeiro e pensar depois — a chama que dá início a tudo.",
+  Taurus:
+    "Signo de terra regido por Vênus. Touro busca estabilidade, prazer e conforto material, com uma determinação tranquila e um gosto refinado pelas coisas boas da vida.",
+  Gemini:
+    "Signo de ar regido por Mercúrio. Gêmeos é curioso, comunicativo e adaptável, sempre em busca de novas ideias, conversas e conexões.",
+  Cancer:
+    "Signo de água regido pela Lua. Câncer é sensível, protetor e profundamente ligado à família e às emoções, criando raízes fortes por onde passa.",
+  Leo: "Signo de fogo regido pelo Sol. Leão tem brilho, generosidade e vontade de se expressar, irradiando confiança e calor para quem está ao redor.",
+  Virgo:
+    "Signo de terra regido por Mercúrio. Virgem é analítico, dedicado e detalhista, com talento para organizar, aperfeiçoar e cuidar do que é importante.",
+  Libra:
+    "Signo de ar regido por Vênus. Libra busca equilíbrio, harmonia e justiça nas relações, com um olhar estético apurado e talento para mediar conflitos.",
+  Scorpio:
+    "Signo de água regido por Plutão. Escorpião é intenso, magnético e investigativo, com uma força emocional profunda e capacidade de transformação.",
+  Sagittarius:
+    "Signo de fogo regido por Júpiter. Sagitário é otimista, aventureiro e filosófico, sempre em busca de expansão, liberdade e novos horizontes.",
+  Capricorn:
+    "Signo de terra regido por Saturno. Capricórnio é disciplinado, ambicioso e responsável, construindo resultados sólidos com paciência e persistência.",
+  Aquarius:
+    "Signo de ar regido por Urano. Aquário é original, independente e visionário, com um olhar voltado para o coletivo e para o futuro.",
+  Pisces:
+    "Signo de água regido por Netuno. Peixes é sensível, intuitivo e criativo, com uma conexão espiritual profunda e grande capacidade de empatia.",
+};
+
 export const PLANET_LABELS: Record<string, string> = {
   Sun: "Sol",
   Moon: "Lua",

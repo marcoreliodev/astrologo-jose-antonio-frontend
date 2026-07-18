@@ -2,11 +2,8 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, CalendarDays, MapPin, ShieldAlert, Trash2 } from "lucide-react";
-import { AppHeader } from "../components/AppHeader";
-import { AstroChartWheel } from "../components/AstroChartWheel";
-import { ChartHeaderCards } from "../components/ChartHeaderCards";
-import { ChartAspectTable } from "../components/ChartAspectTable";
-import { HouseDegreesTable } from "../components/HouseDegreesTable";
+import { LandingHeader } from "../components/LandingHeader";
+import { ChartResultView } from "../components/ChartResultView";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { AlertBanner } from "../components/AlertBanner";
 import { MarsGlyph } from "../components/CosmicPanel";
@@ -40,7 +37,7 @@ export default function MapaDetalhePage() {
 
   return (
     <div className="min-h-screen bg-offwhite">
-      <AppHeader />
+      <LandingHeader />
 
       <main className="mx-auto max-w-6xl px-6 py-10">
         <Link
@@ -107,21 +104,8 @@ export default function MapaDetalhePage() {
             )}
 
             <div className="mb-6">
-              <ChartHeaderCards
-                sunSign={chart.chartData.planets.find((p) => p.name === "Sun")!.signName}
-                ascSign={chart.chartData.cusps.find((c) => c.house === 1)!.signName}
-                moonSign={chart.chartData.planets.find((p) => p.name === "Moon")!.signName}
-              />
+              <ChartResultView chart={chart} />
             </div>
-
-            <div className="mb-8 grid gap-6 lg:grid-cols-[1fr_320px]">
-              <div className="rounded-2xl border border-line bg-white p-4 sm:p-8">
-                <AstroChartWheel chartData={chart.chartData} />
-              </div>
-              <HouseDegreesTable cusps={chart.chartData.cusps} />
-            </div>
-
-            <ChartAspectTable chartData={chart.chartData} />
           </>
         )}
       </main>

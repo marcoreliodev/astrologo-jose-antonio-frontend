@@ -2,6 +2,9 @@ export interface CityOption {
   lat: number;
   lon: number;
   displayName: string;
+  city: string;
+  state: string;
+  country: string;
 }
 
 export interface ChartPlanet {
@@ -54,8 +57,9 @@ export interface AstralChart {
   birthMin: number;
   lat: number;
   lon: number;
-  tzone: number;
   city: string;
+  state: string;
+  country: string;
   chartData: ChartData;
   userId: string;
   createdAt: string;
@@ -71,6 +75,7 @@ export interface CreateChartPayload {
   birthMin: number;
   lat: number;
   lon: number;
-  tzone: number;
   city: string;
+  state: string;
+  country: string;
 }

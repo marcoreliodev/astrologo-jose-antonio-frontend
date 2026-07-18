@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Mail, Lock } from "lucide-react";
-import { CosmicPanel, MarsGlyph } from "../components/CosmicPanel";
+import { CosmicPanel } from "../components/CosmicPanel";
 import { TextField } from "../components/TextField";
 import { Button } from "../components/Button";
 import { AlertBanner } from "../components/AlertBanner";
@@ -56,7 +56,6 @@ export default function LoginPage() {
       <div className="flex items-center justify-center bg-offwhite px-6 py-12">
         <div className="w-full max-w-sm" style={{ animation: "rise-fade 0.4s ease-out" }}>
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
-            <MarsGlyph className="h-6 w-6 text-marte" />
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-noturno">
               Astrólogo José Antonio
             </span>

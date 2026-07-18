@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Search, ShieldAlert, UserX } from "lucide-react";
-import { AppHeader } from "../components/AppHeader";
+import { LandingHeader } from "../components/LandingHeader";
+import { AdminSubNav } from "../components/AdminSubNav";
 import { Button } from "../components/Button";
 import { AlertBanner } from "../components/AlertBanner";
 import { RoleBadge } from "../components/RoleBadge";
@@ -73,7 +74,8 @@ export default function AdminUsersPage() {
 
   return (
     <div className="min-h-screen bg-offwhite">
-      <AppHeader wide />
+      <LandingHeader />
+      <AdminSubNav />
 
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">

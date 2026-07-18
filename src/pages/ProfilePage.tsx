@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { User, Mail, KeyRound, ShieldCheck, CalendarDays } from "lucide-react";
-import { AppHeader } from "../components/AppHeader";
+import { LandingHeader } from "../components/LandingHeader";
 import { ProfileCard } from "../components/ProfileCard";
 import { TextField } from "../components/TextField";
 import { PhoneField } from "../components/PhoneField";
@@ -32,7 +32,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-offwhite">
-      <AppHeader />
+      <LandingHeader />
 
       <main className="mx-auto max-w-3xl px-6 py-10">
         <div className="mb-9 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -50,7 +50,9 @@ export default function ProfilePage() {
               <ShieldCheck size={18} />
             </span>
             <div className="text-sm">
-              <p className="font-semibold text-noturno">{roleLabels[user.role] ?? user.role}</p>
+              {user.role === "admin" && (
+                <p className="font-semibold text-noturno">{roleLabels[user.role]}</p>
+              )}
               <p className="flex items-center gap-1 text-ink-soft">
                 <CalendarDays size={13} />
                 desde {memberSince}
@@ -111,7 +113,7 @@ function ProfileInfoCard() {
 
   const onSubmit = (values: ProfileFormValues) => {
     setApiError(null);
-    mutation.mutate(values);
+    mutation.mutate({ ...values, phone: values.phone ?? "" });
   };
 
   return (

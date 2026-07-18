@@ -14,10 +14,17 @@ export const chartFormSchema = z.object({
   city: z
     .string()
     .trim()
-    .min(1, "Busque e selecione uma cidade"),
-  lat: z.number({ message: "Selecione uma cidade na lista" }),
-  lon: z.number({ message: "Selecione uma cidade na lista" }),
-  tzone: z.number({ message: "Selecione o fuso horário" }),
+    .min(1, "Busque e selecione uma cidade na lista"),
+  state: z
+    .string()
+    .trim()
+    .min(1, "Busque e selecione uma cidade na lista"),
+  country: z
+    .string()
+    .trim()
+    .min(1, "Busque e selecione uma cidade na lista"),
+  lat: z.number({ message: "Busque e selecione uma cidade na lista" }),
+  lon: z.number({ message: "Busque e selecione uma cidade na lista" }),
 });
 
 export type ChartFormValues = z.infer<typeof chartFormSchema>;

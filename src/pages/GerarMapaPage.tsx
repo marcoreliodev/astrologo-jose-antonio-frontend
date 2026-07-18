@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { User, Clock, CalendarDays, Sparkles } from "lucide-react";
-import { AppHeader } from "../components/AppHeader";
+import { LandingHeader } from "../components/LandingHeader";
 import { ProfileCard } from "../components/ProfileCard";
 import { TextField } from "../components/TextField";
 import { CityAutocomplete } from "../components/CityAutocomplete";
@@ -16,13 +16,6 @@ import { getApiErrorMessage } from "../lib/api-client";
 import { useAuth } from "../context/AuthContext";
 import type { CityOption } from "../types/charts";
 
-const TIMEZONE_OPTIONS = [
-  { value: -2, label: "UTC−2 · Fernando de Noronha" },
-  { value: -3, label: "UTC−3 · Brasília, São Paulo, Rio de Janeiro…" },
-  { value: -4, label: "UTC−4 · Amazonas, Mato Grosso, Rondônia, Roraima" },
-  { value: -5, label: "UTC−5 · Acre" },
-];
-
 export default function GerarMapaPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -32,6 +25,7 @@ export default function GerarMapaPage() {
     register,
     handleSubmit,
     setValue,
+    resetField,
     watch,
     formState: { errors, isSubmitting },
   } = useForm<ChartFormValues>({
@@ -41,7 +35,8 @@ export default function GerarMapaPage() {
       birthDate: "",
       birthTime: "",
       city: "",
-      tzone: -3,
+      state: "",
+      country: "",
     },
   });
 
@@ -58,9 +53,19 @@ export default function GerarMapaPage() {
   });
 
   const onCitySelect = (city: CityOption) => {
-    setValue("city", city.displayName.split(",")[0].trim(), { shouldValidate: true });
+    setValue("city", city.city, { shouldValidate: true });
+    setValue("state", city.state, { shouldValidate: true });
+    setValue("country", city.country, { shouldValidate: true });
     setValue("lat", city.lat, { shouldValidate: true });
     setValue("lon", city.lon, { shouldValidate: true });
+  };
+
+  const onCityClear = () => {
+    setValue("city", "", { shouldValidate: false });
+    setValue("state", "", { shouldValidate: false });
+    setValue("country", "", { shouldValidate: false });
+    resetField("lat");
+    resetField("lon");
   };
 
   const onSubmit = (values: ChartFormValues) => {
@@ -77,14 +82,15 @@ export default function GerarMapaPage() {
       birthMin: min,
       lat: values.lat,
       lon: values.lon,
-      tzone: values.tzone,
       city: values.city,
+      state: values.state,
+      country: values.country,
     });
   };
 
   return (
     <div className="min-h-screen bg-offwhite">
-      <AppHeader />
+      <LandingHeader />
 
       <main className="mx-auto max-w-3xl px-6 py-10">
         <div className="mb-8">
@@ -134,29 +140,12 @@ export default function GerarMapaPage() {
               />
             </div>
 
-            <CityAutocomplete value={cityValue} onSelect={onCitySelect} error={errors.city?.message} />
-
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="tzone" className="text-sm font-medium text-ink">
-                Fuso horário no momento do nascimento
-              </label>
-              <select
-                id="tzone"
-                className="w-full rounded-xl border border-line bg-white px-4 py-3 text-[15px] text-ink transition-colors duration-150 focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40"
-                {...register("tzone", { valueAsNumber: true })}
-              >
-                {TIMEZONE_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {errors.tzone?.message && (
-                <p role="alert" className="text-xs font-medium text-marte">
-                  {errors.tzone.message}
-                </p>
-              )}
-            </div>
+            <CityAutocomplete
+              value={cityValue}
+              onSelect={onCitySelect}
+              onClear={onCityClear}
+              error={errors.city?.message}
+            />
 
             <Button
               type="submit"

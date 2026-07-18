@@ -3,10 +3,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
-import { User, Mail, Lock } from "lucide-react";
-import { CosmicPanel, MarsGlyph } from "../components/CosmicPanel";
+import { User, Mail, Lock, Sparkles } from "lucide-react";
+import { CosmicPanel } from "../components/CosmicPanel";
 import { TextField } from "../components/TextField";
 import { PhoneField } from "../components/PhoneField";
+import { TermsCheckbox } from "../components/TermsCheckbox";
 import { Button } from "../components/Button";
 import { AlertBanner } from "../components/AlertBanner";
 import { registerSchema, type RegisterFormValues } from "../schemas/auth";
@@ -26,13 +27,15 @@ export default function RegisterPage() {
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
+    defaultValues: { name: "", email: "", phone: "", password: "", acceptedTerms: false },
   });
 
   const mutation = useMutation({
-    mutationFn: registerRequest,
+    mutationFn: (values: RegisterFormValues) =>
+    registerRequest({ ...values, phone: values.phone ?? "", acceptedTermsAt: new Date().toISOString() }),
     onSuccess: (data) => {
       signIn(data);
-      navigate("/perfil", { replace: true });
+      navigate("/mapa-astral", { replace: true });
     },
     onError: (error) => {
       setApiError(getApiErrorMessage(error));
@@ -41,31 +44,30 @@ export default function RegisterPage() {
 
   const onSubmit = (values: RegisterFormValues) => {
     setApiError(null);
-    const { confirmPassword, ...payload } = values;
-    void confirmPassword;
-    mutation.mutate(payload);
+    mutation.mutate(values);
   };
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <CosmicPanel
-        eyebrow="Nova jornada"
-        title="2026 é o ano da conquista. Comece agora."
-        description="Crie sua conta e desbloqueie seu guia astrológico completo, com mapas, previsões e orientações personalizadas."
+        eyebrow="Mapa astral gratuito"
+        title="Descubra o que os astros diziam no seu nascimento."
+        description="Crie sua conta em menos de um minuto e gere agora o seu mapa astral completo, com planetas, casas e aspectos calculados com precisão."
       />
 
       <div className="flex items-center justify-center bg-offwhite px-6 py-12">
         <div className="w-full max-w-sm" style={{ animation: "rise-fade 0.4s ease-out" }}>
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
-            <MarsGlyph className="h-6 w-6 text-marte" />
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-noturno">
               Astrólogo José Antonio
             </span>
           </div>
 
-          <h2 className="font-display text-3xl font-semibold text-noturno">Criar conta</h2>
+          <h2 className="font-display text-3xl font-semibold text-noturno">
+            Gere seu mapa astral gratuito
+          </h2>
           <p className="mt-2 text-sm text-ink-soft">
-            Leva menos de um minuto para começar.
+            Só precisamos do seu nome, e-mail e uma senha. Leva menos de um minuto.
           </p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="mt-8 flex flex-col gap-5" noValidate>
@@ -90,8 +92,6 @@ export default function RegisterPage() {
               {...register("email")}
             />
 
-            <PhoneField control={control} name="phone" error={errors.phone?.message} />
-
             <TextField
               label="Senha"
               type="password"
@@ -102,18 +102,18 @@ export default function RegisterPage() {
               {...register("password")}
             />
 
-            <TextField
-              label="Confirmar senha"
-              type="password"
-              autoComplete="new-password"
-              placeholder="Repita a senha"
-              icon={<Lock size={18} />}
-              error={errors.confirmPassword?.message}
-              {...register("confirmPassword")}
+            <PhoneField
+              control={control}
+              name="phone"
+              label="Telefone (opcional)"
+              error={errors.phone?.message}
             />
 
+            <TermsCheckbox control={control} name="acceptedTerms" error={errors.acceptedTerms?.message} />
+
             <Button type="submit" isLoading={isSubmitting || mutation.isPending} className="mt-1 w-full">
-              Criar conta
+              <Sparkles size={18} />
+              Gerar meu mapa astral
             </Button>
           </form>
 

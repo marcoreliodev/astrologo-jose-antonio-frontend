@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { LandingHeader } from "./LandingHeader";
-import { MarsGlyph } from "./CosmicPanel";
+import { LandingFooter } from "./LandingFooter";
 
 export function LegalPageLayout({
   eyebrow,
@@ -37,14 +37,7 @@ export function LegalPageLayout({
         <div className="legal-content mt-10">{children}</div>
       </main>
 
-      <footer className="border-t border-line bg-offwhite py-8">
-        <div className="mx-auto flex max-w-3xl items-center gap-2.5 px-6">
-          <MarsGlyph className="h-5 w-5 text-marte" />
-          <span className="font-display text-sm font-semibold text-noturno">
-            Astrólogo José Antonio
-          </span>
-        </div>
-      </footer>
+      <LandingFooter />
     </div>
   );
 }

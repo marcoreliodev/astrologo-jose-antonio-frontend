@@ -7,7 +7,8 @@ export const EXTERNAL_LINKS = {
   tiktok: 'https://www.tiktok.com/@astrologojoseantonio',
   facebook: 'https://www.facebook.com/share/1CyLx6i4vx/',
   youtube: 'https://www.youtube.com/@astrologojoseantonio',
-  whatsapp: 'https://wa.me/message/GCA4IAN43PJIF1',
+  // whatsapp: 'https://wa.me/message/GCA4IAN43PJIF1',
+  whatsapp: 'https://wa.me/5561991941326',
 } as const;
 
 export const FEATURED_REELS: { shortcode: string; caption: string }[] = [

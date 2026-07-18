@@ -2,29 +2,28 @@ import { z } from "zod";
 
 export const phoneRegex = /^\d{10,11}$/;
 
-export const registerSchema = z
-  .object({
-    name: z
-      .string()
-      .trim()
-      .min(2, "Informe seu nome completo")
-      .max(120, "Nome muito longo"),
-    email: z.string().trim().toLowerCase().email("E-mail inválido"),
-    phone: z
-      .string()
-      .trim()
-      .transform((value) => value.replace(/\D/g, ""))
-      .pipe(z.string().regex(phoneRegex, "Informe um telefone válido com DDD")),
-    password: z
-      .string()
-      .min(6, "A senha precisa ter ao menos 6 caracteres")
-      .max(72, "Senha muito longa"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "As senhas não coincidem",
-    path: ["confirmPassword"],
-  });
+export const registerSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, "Informe seu nome")
+    .max(120, "Nome muito longo"),
+  email: z.string().trim().toLowerCase().email("E-mail inválido"),
+  phone: z
+    .string()
+    .trim()
+    .transform((value) => value.replace(/\D/g, ""))
+    .refine((value) => value.length === 0 || phoneRegex.test(value), {
+      message: "Informe um telefone válido com DDD",
+    }),
+  password: z
+    .string()
+    .min(6, "A senha precisa ter ao menos 6 caracteres")
+    .max(72, "Senha muito longa"),
+  acceptedTerms: z.boolean().refine((value) => value === true, {
+    message: "Você precisa aceitar os Termos de Uso e a Política de Privacidade",
+  }),
+});
 
 export type RegisterFormValues = z.infer<typeof registerSchema>;
 

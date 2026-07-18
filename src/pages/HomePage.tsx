@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   MessageCircle,
   Sparkles,
@@ -8,11 +9,14 @@ import {
   Wand2,
   ScrollText,
   BookOpen,
+  GraduationCap,
+  Layers3,
+  Brain,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { LandingHeader } from '../components/LandingHeader';
+import { LandingFooter } from '../components/LandingFooter';
 import { SocialCard } from '../components/SocialCard';
-import { MarsGlyph } from '../components/CosmicPanel';
 import {
   InstagramGlyph,
   TikTokGlyph,
@@ -22,20 +26,33 @@ import {
 import { InstagramEmbed } from '../components/InstagramEmbed';
 import { Reveal } from '../components/Reveal';
 import { AnimatedCosmicBackdrop } from '../components/AnimatedCosmicBackdrop';
-import { useAuth } from '../context/AuthContext';
+import { ZodiacWheel } from '../components/ZodiacWheel';
+import { SpiralOrbit } from '../components/SpiralOrbit';
+import { ZodiacGlyph } from '../components/ZodiacGlyph';
+import { SIGN_ICONS } from '../lib/zodiac-icons';
+import { SignsShowcase } from '../components/SignsShowcase';
+import { FaqAccordion } from '../components/FaqAccordion';
+import { FloatingGlyphs } from '../components/FloatingGlyphs';
+import { HeroGenerateFlow } from '../components/HeroGenerateFlow';
+import { ChartResultView } from '../components/ChartResultView';
+import { useGenerateFlow } from '../context/GenerateFlowContext';
 import { EXTERNAL_LINKS, FEATURED_REELS } from '../lib/external-links';
+import type { AstralChart } from '../types/charts';
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-offwhite">
       <LandingHeader />
       <HeroSection />
+      <SignsSection />
       <HowItWorksSection />
       <FeaturesSection />
       <AboutSection />
       <BookSection />
+      <FaqSection />
       <ReelsSection />
       <SocialSection />
+      <FinalCtaSection />
       <WhatsappSection />
       <LandingFooter />
     </div>
@@ -43,14 +60,13 @@ export default function HomePage() {
 }
 
 function HeroSection() {
-  const { isAuthenticated } = useAuth();
-  const stars = Array.from({ length: 36 }, (_, i) => ({
-    id: i,
-    top: (i * 31) % 100,
-    left: (i * 47) % 100,
-    size: i % 6 === 0 ? 2.5 : 1.3,
-    delay: (i % 8) * 0.4,
-  }));
+  const { isOpen, openFlow, closeFlow } = useGenerateFlow();
+  const [generatedChart, setGeneratedChart] = useState<AstralChart | null>(null);
+
+  const resetFlow = () => {
+    setGeneratedChart(null);
+    closeFlow();
+  };
 
   return (
     <section className="relative overflow-hidden bg-noturno">
@@ -62,154 +78,186 @@ function HeroSection() {
       />
       <AnimatedCosmicBackdrop variant="hero" />
 
-      {/* estrelas */}
-      <div className="absolute inset-0 pointer-events-none">
-        {stars.map((star) => (
-          <span
-            key={star.id}
-            className="absolute rounded-full bg-bronze-light"
-            style={{
-              top: `${star.top}%`,
-              left: `${star.left}%`,
-              width: star.size,
-              height: star.size,
-              animation: `twinkle 3.5s ease-in-out ${star.delay}s infinite`,
-            }}
-          />
-        ))}
-      </div>
-
-      <div className="relative mx-auto max-w-6xl px-6 py-16 lg:py-24">
-        {/* layout: texto + roda do mapa astral */}
-        <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center lg:gap-16">
-          {/* coluna esquerda — texto */}
-          <div style={{ animation: 'rise-fade 0.5s ease-out' }}>
-            <div className="inline-flex items-center gap-2 rounded-full bg-bronze/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-bronze-light">
-              <Sparkles className="h-3.5 w-3.5" />
-              Mapa astral gratuito
+      {generatedChart ? (
+        <div id="gerar-mapa" className="relative mx-auto max-w-6xl scroll-mt-20 px-6 py-16 lg:py-20">
+          <div className="mb-8 flex flex-col gap-4 rounded-2xl bg-offwhite/10 p-5 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-bronze-light">
+                Mapa gerado com sucesso
+              </span>
+              <h2 className="mt-1 font-display text-2xl font-semibold text-offwhite">
+                {generatedChart.name}
+              </h2>
+              <p className="mt-1 text-sm text-offwhite/60">
+                {new Date(
+                  generatedChart.birthYear,
+                  generatedChart.birthMonth - 1,
+                  generatedChart.birthDay,
+                ).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}{' '}
+                às {String(generatedChart.birthHour).padStart(2, '0')}:
+                {String(generatedChart.birthMin).padStart(2, '0')} · {generatedChart.city}
+              </p>
             </div>
-
-            <h1 className="mt-6 font-display text-4xl font-bold leading-[1.1] text-offwhite sm:text-5xl">
-              Descubra o que os astros
-              <br />
-              <span className="bronze-gradient-text">diziam no seu nascimento.</span>
-            </h1>
-
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-offwhite/70">
-              Informe sua data, horário e cidade de nascimento e gere seu mapa astral
-              completo em segundos: planetas, casas e aspectos calculados com precisão
-              e traduzidos para uma leitura clara, com a curadoria do astrólogo José
-              Antonio.
-            </p>
-
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <div className="flex shrink-0 gap-3">
               <Link
-                to={isAuthenticated ? '/mapa-astral' : '/cadastro'}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-marte px-6 py-3.5 text-[15px] font-semibold text-offwhite transition-all hover:bg-marte-dark hover:shadow-lg hover:shadow-marte/30 active:scale-[0.99]"
+                to="/meus-mapas"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-offwhite/20 bg-offwhite/5 px-4 py-2.5 text-sm font-semibold text-offwhite transition-all hover:bg-offwhite/10"
               >
-                <Sparkles size={18} />
-                Gere Seu Mapa
+                Meus mapas
               </Link>
-              <a
-                href={EXTERNAL_LINKS.whatsapp}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-offwhite/20 bg-offwhite/5 px-6 py-3.5 text-[15px] font-semibold text-offwhite transition-all hover:bg-offwhite/10"
+              <button
+                type="button"
+                onClick={resetFlow}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-marte px-4 py-2.5 text-sm font-semibold text-offwhite transition-all hover:bg-marte-dark"
               >
-                <MessageCircle size={18} />
-                Marcar consulta
-              </a>
+                <Sparkles size={16} />
+                Gerar outro mapa
+              </button>
             </div>
           </div>
 
-          {/* coluna direita — roda astral decorativa + foto do astrólogo */}
-          <div
-            className="flex items-end justify-center gap-6 lg:gap-8"
-            style={{ animation: 'rise-fade 0.65s ease-out' }}
-          >
-            <div className="relative shrink-0">
-              <div
-                className="absolute -inset-1 rounded-[2rem] opacity-50 blur-xl"
-                style={{
-                  background:
-                    'conic-gradient(from 200deg, #C70039, #B8860B, #081E48, #B8860B, #C70039)',
-                  animation: 'orbit-spin 14s linear infinite',
-                }}
-                aria-hidden
-              />
-              <img
-                src="/images/jose-antonio.jpg"
-                alt="Astrólogo José Antonio Coutinho Vinhas"
-                className="relative w-52 rounded-[1.75rem] object-cover shadow-2xl sm:w-64 lg:w-72"
-                style={{
-                  aspectRatio: '3/4',
-                  objectPosition: 'center top',
-                }}
-              />
-              <div
-                className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-noturno/90 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-bronze backdrop-blur-sm border border-bronze/20"
-                style={{ animation: 'float-soft 5s ease-in-out infinite' }}
-              >
-                José Antonio • Astrólogo
-              </div>
-            </div>
-
-            <ChartWheelDecoration className="hidden w-44 drop-shadow-2xl sm:block lg:w-56" />
+          <div className="rounded-3xl bg-offwhite p-4 sm:p-6" style={{ animation: 'rise-fade 0.4s ease-out' }}>
+            <ChartResultView chart={generatedChart} />
           </div>
         </div>
+      ) : (
+        <div className="relative mx-auto max-w-6xl px-6 py-16 lg:py-24">
+          {/* layout: texto/formulário + roda do mapa astral */}
+          <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center lg:gap-16">
+            {/* coluna esquerda — texto ou fluxo de geração do mapa */}
+            <div id="gerar-mapa" className="scroll-mt-20" style={{ animation: 'rise-fade 0.5s ease-out' }}>
+              {isOpen ? (
+                <HeroGenerateFlow onGenerated={setGeneratedChart} />
+              ) : (
+                <>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-bronze/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-bronze-light">
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Mapa astral gratuito
+                  </div>
+
+                  <h1 className="mt-6 font-display text-4xl font-bold leading-[1.1] text-offwhite sm:text-5xl">
+                    Descubra o que os astros
+                    <br />
+                    <span className="bronze-gradient-text">diziam no seu nascimento.</span>
+                  </h1>
+
+                  <p className="mt-6 max-w-lg text-lg leading-relaxed text-offwhite/70">
+                    Informe sua data, horário e cidade de nascimento e gere seu mapa astral
+                    completo em segundos: planetas, casas e aspectos calculados com precisão
+                    e traduzidos para uma leitura clara, com a curadoria do astrólogo José
+                    Antonio.
+                  </p>
+
+                  <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                    <button
+                      type="button"
+                      onClick={openFlow}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-marte px-6 py-3.5 text-[15px] font-semibold text-offwhite transition-all hover:bg-marte-dark hover:shadow-lg hover:shadow-marte/30 active:scale-[0.99]"
+                      style={{ animation: 'btn-pulse 2.2s ease-in-out infinite' }}
+                    >
+                      <Sparkles size={18} />
+                      Gere seu mapa astral gratuito
+                    </button>
+                    <a
+                      href={EXTERNAL_LINKS.whatsapp}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-offwhite/20 bg-offwhite/5 px-6 py-3.5 text-[15px] font-semibold text-offwhite transition-all hover:bg-offwhite/10"
+                    >
+                      <MessageCircle size={18} />
+                      Marcar consulta
+                    </a>
+                  </div>
+
+                  <div className="mt-8 flex items-center gap-3 text-sm text-offwhite/55">
+                    <span className="flex -space-x-2">
+                      <ZodiacGlyph svg={SIGN_ICONS.Aries} size={16} className="text-bronze-light" />
+                      <ZodiacGlyph svg={SIGN_ICONS.Leo} size={16} className="text-bronze-light" />
+                      <ZodiacGlyph svg={SIGN_ICONS.Scorpio} size={16} className="text-bronze-light" />
+                    </span>
+                    Interpretação assinada por José Antonio, astrólogo há mais de 40 anos.
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* coluna direita — foto do astrólogo, espiral orbital e uma breve apresentação */}
+            <div
+              className="flex flex-col items-center gap-6"
+              style={{ animation: 'rise-fade 0.65s ease-out' }}
+            >
+              <div className="relative flex shrink-0 items-center justify-center">
+                <SpiralOrbit
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                  size="clamp(260px, 34vw, 380px)"
+                  duration={85}
+                  opacity={0.5}
+                />
+                <div
+                  className="absolute h-full w-full rounded-[2rem] opacity-50 blur-xl"
+                  style={{
+                    background:
+                      'conic-gradient(from 200deg, #C70039, #B8860B, #081E48, #B8860B, #C70039)',
+                    animation: 'orbit-spin 14s linear infinite',
+                  }}
+                  aria-hidden
+                />
+                <img
+                  src="/images/jose-antonio.jpg"
+                  alt="Astrólogo José Antonio Coutinho Vinhas"
+                  className="relative w-52 rounded-[1.75rem] object-cover shadow-2xl sm:w-60 lg:w-64"
+                  style={{
+                    aspectRatio: '3/4',
+                    objectPosition: 'center top',
+                  }}
+                />
+              </div>
+
+              <div className="max-w-xs text-center">
+                <p className="font-display text-4xl font-semibold text-offwhite">
+                  José Antonio Coutinho Vinhas
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-offwhite/65">
+                  Astrólogo, tarólogo e psicólogo — mais de 40 anos traduzindo a
+                  linguagem dos astros para decisões da vida real.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function SignsSection() {
+  return (
+    <section id="signos" className="relative overflow-hidden bg-offwhite py-20 sm:py-28">
+      <FloatingGlyphs />
+      <div className="relative mx-auto max-w-6xl px-6">
+        <Reveal className="mb-12 text-center">
+          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-bronze">
+            O zodíaco
+          </span>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-noturno sm:text-4xl">
+            Os 12 signos e o que eles revelam
+          </h2>
+          <p className="mx-auto mt-4 max-w-lg text-base text-ink-soft">
+            Passe o mouse ou toque em cada signo para ver as datas, o elemento
+            e o planeta regente.
+          </p>
+        </Reveal>
+
+        <Reveal delay={100}>
+          <SignsShowcase />
+        </Reveal>
       </div>
     </section>
   );
 }
 
-function ChartWheelDecoration({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 240 240"
-      className={className}
-      style={{ animation: 'float-soft 6s ease-in-out 1s infinite' }}
-      aria-hidden
-    >
-      <circle cx="120" cy="120" r="112" fill="none" stroke="#F8E2A8" strokeOpacity="0.5" strokeWidth="1.5" />
-      <circle cx="120" cy="120" r="82" fill="none" stroke="#F8E2A8" strokeOpacity="0.4" strokeWidth="1" />
-      <circle cx="120" cy="120" r="52" fill="none" stroke="#F8E2A8" strokeOpacity="0.35" strokeWidth="1" />
-      {Array.from({ length: 12 }, (_, i) => {
-        const angle = (i * 30 * Math.PI) / 180;
-        const x1 = 120 + 52 * Math.cos(angle);
-        const y1 = 120 + 52 * Math.sin(angle);
-        const x2 = 120 + 112 * Math.cos(angle);
-        const y2 = 120 + 112 * Math.sin(angle);
-        return (
-          <line
-            key={i}
-            x1={x1}
-            y1={y1}
-            x2={x2}
-            y2={y2}
-            stroke="#F8E2A8"
-            strokeOpacity="0.3"
-            strokeWidth="1"
-          />
-        );
-      })}
-      {Array.from({ length: 8 }, (_, i) => {
-        const angle = (i * 47 * Math.PI) / 180 + 0.3;
-        const r = 65 + ((i * 13) % 40);
-        return (
-          <circle
-            key={i}
-            cx={120 + r * Math.cos(angle)}
-            cy={120 + r * Math.sin(angle)}
-            r={i % 3 === 0 ? 4 : 2.5}
-            fill={i % 2 === 0 ? '#C70039' : '#F8E2A8'}
-          />
-        );
-      })}
-    </svg>
-  );
-}
-
 function HowItWorksSection() {
+  const { openFlow } = useGenerateFlow();
   const steps = [
     {
       icon: <UserRoundPen size={20} />,
@@ -229,8 +277,9 @@ function HowItWorksSection() {
   ];
 
   return (
-    <section id="como-funciona" className="bg-offwhite py-20 sm:py-28">
-      <div className="mx-auto max-w-6xl px-6">
+    <section id="como-funciona" className="relative overflow-hidden bg-offwhite py-20 sm:py-28">
+      <FloatingGlyphs />
+      <div className="relative mx-auto max-w-6xl px-6">
         <Reveal className="mb-14 text-center">
           <span className="text-xs font-semibold uppercase tracking-[0.25em] text-bronze">
             Como funciona
@@ -264,13 +313,15 @@ function HowItWorksSection() {
         </div>
 
         <Reveal className="mt-10 text-center" delay={200}>
-          <Link
-            to="/cadastro"
+          <button
+            type="button"
+            onClick={openFlow}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-marte px-6 py-3.5 text-[15px] font-semibold text-offwhite transition-all hover:bg-marte-dark hover:shadow-lg hover:shadow-marte/25 active:scale-[0.99]"
+            style={{ animation: 'btn-pulse 2.2s ease-in-out infinite' }}
           >
             <Sparkles size={18} />
-            Gere Seu Mapa Agora
-          </Link>
+            Gere seu mapa astral gratuito
+          </button>
         </Reveal>
       </div>
     </section>
@@ -335,17 +386,34 @@ function FeaturesSection() {
 }
 
 function AboutSection() {
+  const credentials = [
+    { icon: <GraduationCap size={15} />, label: '+40 anos de estudo' },
+    { icon: <Layers3 size={15} />, label: 'Tarólogo' },
+    { icon: <Brain size={15} />, label: 'Psicólogo' },
+  ];
+
   return (
-    <section className="bg-offwhite py-20 sm:py-24">
-      <div className="mx-auto max-w-5xl px-6">
-        <div className="grid gap-10 sm:grid-cols-[auto_1fr] sm:items-center sm:gap-12">
+    <section className="relative overflow-hidden bg-noturno py-20 sm:py-28">
+      <div
+        className="absolute inset-0"
+        style={{ background: 'linear-gradient(180deg, #0E2A5E 0%, #081E48 100%)' }}
+      />
+      <AnimatedCosmicBackdrop variant="about" />
+
+      <div className="relative mx-auto max-w-5xl px-6">
+        <div className="grid gap-12 sm:grid-cols-[auto_1fr] sm:items-center sm:gap-14">
           <Reveal direction="left" className="flex justify-center">
-            <div className="relative">
+            <div className="relative flex shrink-0 items-center justify-center">
+              <SpiralOrbit
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                size="clamp(230px, 32vw, 320px)"
+                duration={80}
+                opacity={0.55}
+              />
               <div
-                className="absolute -inset-2 rounded-[1.5rem] opacity-40 blur-xl"
+                className="absolute h-52 w-52 rounded-full opacity-60 blur-xl sm:h-64 sm:w-64"
                 style={{
-                  background:
-                    'conic-gradient(from 180deg, #C70039, #B8860B, #081E48, #C70039)',
+                  background: 'conic-gradient(from 180deg, #C70039, #B8860B, #081E48, #C70039)',
                   animation: 'orbit-spin 12s linear infinite',
                 }}
                 aria-hidden
@@ -353,29 +421,38 @@ function AboutSection() {
               <img
                 src="/images/jose-antonio-perfil.png"
                 alt="Astrólogo José Antonio"
-                className="relative h-48 w-48 rounded-full border-4 border-offwhite object-cover shadow-2xl sm:h-56 sm:w-56"
+                className="relative h-52 w-52 rounded-full border-4 border-offwhite/90 object-cover shadow-2xl sm:h-64 sm:w-64"
               />
             </div>
           </Reveal>
 
-          <Reveal
-            direction="right"
-            delay={100}
-            className="text-center sm:text-left"
-          >
-            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-bronze">
+          <Reveal direction="right" delay={100} className="text-center sm:text-left">
+            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-bronze-light">
               O astrólogo
             </span>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-noturno sm:text-4xl">
+            <h2 className="mt-3 font-display text-3xl font-semibold text-offwhite sm:text-4xl">
               José Antonio Coutinho Vinhas
             </h2>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-ink-soft">
-              José Antonio é astrólogo com mais de 40 anos de estudo e
-              atendimento a inúmeros clientes, além de ser tarólogo e psicólogo.
-              Com uma visão técnica e humanizada, contribui para o
-              autoconhecimento dos clientes e leitores, traduzindo a linguagem
-              dos astros para a realidade prática da vida.
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-offwhite/70">
+              Com mais de 40 anos de estudo e atendimento a inúmeros clientes,
+              José Antonio traduz a linguagem dos astros para a realidade
+              prática da vida. Também tarólogo e psicólogo, une técnica e
+              sensibilidade humana para contribuir com o autoconhecimento de
+              seus clientes e leitores.
             </p>
+
+            <div className="mt-6 flex flex-wrap justify-center gap-2.5 sm:justify-start">
+              {credentials.map((item) => (
+                <span
+                  key={item.label}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-offwhite/15 bg-offwhite/5 px-3.5 py-1.5 text-xs font-medium text-offwhite/80"
+                >
+                  {item.icon}
+                  {item.label}
+                </span>
+              ))}
+            </div>
+
             <div className="mx-auto mt-8 h-px w-20 bg-gradient-to-r from-bronze to-bronze-light sm:mx-0" />
           </Reveal>
         </div>
@@ -386,13 +463,13 @@ function AboutSection() {
 
 function BookSection() {
   return (
-    <section id="livro" className="bg-offwhite pb-20 sm:pb-28">
+    <section id="livro" className="bg-offwhite pb-20 pt-16 sm:pb-28 sm:pt-20">
       <div className="mx-auto max-w-6xl px-6">
         <Reveal className="flex flex-col items-center gap-6 rounded-2xl border border-line bg-white p-8 text-center sm:flex-row sm:gap-8 sm:p-10 sm:text-left">
           <img
-            src="/images/livro-capa.png"
-            alt="Capa do livro Guia Astrológico 2026: O Ano da Conquista"
-            className="w-28 shrink-0 drop-shadow-lg sm:w-32"
+            src="/images/capa-livro-2026.png"
+            alt="Capa do livro 2026: O Ano da Conquista"
+            className="w-28 shrink-0 rounded-md drop-shadow-lg sm:w-32"
           />
           <div className="flex-1">
             <span className="text-xs font-semibold uppercase tracking-[0.25em] text-bronze">
@@ -403,21 +480,50 @@ function BookSection() {
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-ink-soft">
               Depois de conhecer seu mapa astral, aprofunde-se na regência de Marte
-              em 2026 com o guia escrito por José Antonio — disponível em formato
-              físico e digital.
+              em 2026 com o guia escrito por José Antonio — disponível para compra
+              na Amazon.
             </p>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+            <Link
+              to="/livros"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-marte px-5 py-2.5 text-sm font-semibold text-offwhite transition-all hover:bg-marte-dark"
+              style={{ animation: 'btn-pulse 2.2s ease-in-out infinite' }}
+            >
+              <BookOpen size={16} />
+              Comprar livro físico
+            </Link>
             <a
               href={EXTERNAL_LINKS.bookHotmart}
               target="_blank"
               rel="noreferrer noopener"
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-noturno/15 px-5 py-2.5 text-sm font-semibold text-noturno transition-all hover:bg-noturno/5"
             >
-              <BookOpen size={16} />
-              Conhecer o livro
+              Versão digital
             </a>
           </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function FaqSection() {
+  return (
+    <section id="faq" className="relative overflow-hidden bg-offwhite py-20 sm:py-28">
+      <FloatingGlyphs />
+      <div className="relative mx-auto max-w-6xl px-6">
+        <Reveal className="mb-12 text-center">
+          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-bronze">
+            Perguntas frequentes
+          </span>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-noturno sm:text-4xl">
+            Tire suas dúvidas sobre o mapa astral
+          </h2>
+        </Reveal>
+
+        <Reveal delay={100}>
+          <FaqAccordion />
         </Reveal>
       </div>
     </section>
@@ -509,8 +615,9 @@ function SocialSection() {
   ];
 
   return (
-    <section id="redes" className="bg-offwhite py-20 sm:py-28">
-      <div className="mx-auto max-w-6xl px-6">
+    <section id="redes" className="relative overflow-hidden bg-offwhite py-20 sm:py-28">
+      <FloatingGlyphs />
+      <div className="relative mx-auto max-w-6xl px-6">
         <Reveal className="mb-12 text-center">
           <span className="text-xs font-semibold uppercase tracking-[0.25em] text-bronze">
             Acompanhe
@@ -531,6 +638,42 @@ function SocialSection() {
             </Reveal>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+function FinalCtaSection() {
+  const { openFlow } = useGenerateFlow();
+
+  return (
+    <section className="relative overflow-hidden bg-noturno py-20 sm:py-28">
+      <AnimatedCosmicBackdrop variant="hero" />
+      <div className="relative mx-auto flex max-w-4xl flex-col items-center gap-8 px-6 text-center">
+        <ZodiacWheel className="aspect-square w-40 sm:w-48" />
+
+        <div>
+          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-bronze">
+            É gratuito e leva menos de um minuto
+          </span>
+          <h2 className="mt-4 font-display text-3xl font-semibold text-offwhite sm:text-4xl">
+            Seu mapa astral está esperando pelos astros certos.
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-offwhite/70">
+            Informe seu e-mail e uma senha, e descubra agora os planetas,
+            casas e aspectos calculados no exato momento do seu nascimento.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={openFlow}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-marte px-8 py-4 text-base font-semibold text-offwhite transition-all hover:bg-marte-dark hover:shadow-lg hover:shadow-marte/30 active:scale-[0.99]"
+          style={{ animation: 'btn-pulse 2.2s ease-in-out infinite' }}
+        >
+          <Sparkles size={20} />
+          Gere seu mapa astral gratuito
+        </button>
       </div>
     </section>
   );
@@ -558,6 +701,7 @@ function WhatsappSection() {
           target="_blank"
           rel="noreferrer noopener"
           className="inline-flex items-center gap-2 rounded-xl bg-offwhite px-6 py-3.5 text-[15px] font-semibold text-marte transition-transform hover:scale-[1.02] active:scale-[0.99]"
+          style={{ animation: 'btn-pulse-light 2.2s ease-in-out infinite' }}
         >
           <MessageCircle size={18} />
           Marcar consulta no WhatsApp
@@ -567,35 +711,4 @@ function WhatsappSection() {
   );
 }
 
-function LandingFooter() {
-  return (
-    <footer className="bg-noturno py-10">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 text-center sm:flex-row sm:justify-between sm:text-left">
-        <div className="flex items-center gap-2.5">
-          <MarsGlyph className="h-5 w-5 text-bronze" />
-          <span className="font-display text-base font-semibold text-offwhite">
-            Astrólogo José Antonio
-          </span>
-        </div>
 
-        <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
-          <Link
-            to="/termos-de-uso"
-            className="text-xs font-medium text-offwhite/60 transition-colors hover:text-offwhite"
-          >
-            Termos de Uso
-          </Link>
-          <Link
-            to="/politica-de-privacidade"
-            className="text-xs font-medium text-offwhite/60 transition-colors hover:text-offwhite"
-          >
-            Política de Privacidade
-          </Link>
-          <p className="text-xs uppercase tracking-[0.2em] text-offwhite/40">
-            Mapa astral gratuito
-          </p>
-        </div>
-      </div>
-    </footer>
-  );
-}
