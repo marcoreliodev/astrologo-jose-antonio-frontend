@@ -5,7 +5,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useGenerateFlow } from '../context/GenerateFlowContext';
 
-const NAV_ANCHORS = [{ hash: '#signos', label: 'Signos' }];
+const NAV_ANCHORS = [
+  { hash: '#signos', label: 'Signos' },
+  { hash: '#efemerides', label: 'Céu de hoje' },
+];
 
 export function LandingHeader() {
   const { isAuthenticated, user, signOut } = useAuth();

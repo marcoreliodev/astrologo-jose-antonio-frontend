@@ -41,9 +41,21 @@ const COLORS_SIGNS = [
   ELEMENT_COLORS.water, // Peixes
 ];
 
+/**
+ * Divide uma longitude absoluta (0-360) em grau/minuto DENTRO do signo (0-29° / 0-59'),
+ * no mesmo formato que radix.addPointsOfInterest() espera no campo degree/minute.
+ */
+function toDegreeMinute(longitude: number): { degree: number; minute: number } {
+  const normalized = ((longitude % 360) + 360) % 360;
+  const degInSign = normalized % 30;
+  const degree = Math.floor(degInSign);
+  const minute = Math.round((degInSign - degree) * 60);
+  return { degree, minute };
+}
+
 export function AstroChartWheel({
   chartData,
-  size = 460,
+  size = 560,
 }: {
   chartData: ChartData;
   size?: number;
@@ -82,10 +94,8 @@ export function AstroChartWheel({
     container.innerHTML = '';
 
     try {
-      // A AstroChart espera um dicionário { nomeDoPlaneta: [longitude, velocidade] }.
-      // O sinal da velocidade é o que faz a lib desenhar o símbolo de retrógrado (R),
-      // então usamos speed quando disponível e, como fallback, um valor negativo
-      // sintético se o back-end só mandou o boolean `retrograde`.
+      const symbolScale = drawSize / size;
+
       const planets: Record<string, number[]> = {};
       chartData.planets.forEach((planet) => {
         const speed =
@@ -113,6 +123,17 @@ export function AstroChartWheel({
         LINE_COLOR: '#3A3A3A',
         CIRCLE_COLOR: '#3A3A3A',
         CUSPS_FONT_COLOR: '#1A2238',
+        CUSPS_LINES_TO_OUTER_CIRCLE: true,
+        SYMBOL_SCALE: symbolScale,
+
+        // graus/minutos + ℞ perto de cada planeta
+        SHOW_DEGREES_MINUTES: true,
+        DEGREES_MINUTES_TEXT_SIZE: 10,
+        DEGREES_MINUTES_GAP: 8,
+
+        // espessuras independentes
+        HOUSES_STROKE: 1,
+        ASPECTS_STROKE: 1,
         SYMBOL_AXIS_FONT_COLOR: '#1A2238',
         COLORS_SIGNS,
         // Faixa de fundo dos signos (o "anel colorido" visto na imagem)
@@ -128,6 +149,8 @@ export function AstroChartWheel({
         COLOR_CAPRICORN: COLORS_SIGNS[9],
         COLOR_AQUARIUS: COLORS_SIGNS[10],
         COLOR_PISCES: COLORS_SIGNS[11],
+        SYMBOL_NNODE: 'NorthNode',
+        SHOW_DIGNITIES_TEXT: false,
         ASPECTS: {
           conjunction: { degree: 0, orbit: 8, color: '#B9AFC9' },
           semisextile: { degree: 30, orbit: 2, color: '#B9AFC9' },
@@ -141,13 +164,43 @@ export function AstroChartWheel({
       });
 
       const radix = chart.radix({ planets, cusps });
+
       radix.addPointsOfInterest({
-        As: [cusps[0]],
-        Ic: [cusps[3]],
-        Ds: [cusps[6]],
-        Mc: [cusps[9]],
+        As: { longitude: cusps[0], ...toDegreeMinute(cusps[0]) },
+        Ic: { longitude: cusps[3], ...toDegreeMinute(cusps[3]) },
+        Ds: { longitude: cusps[6], ...toDegreeMinute(cusps[6]) },
+        Mc: { longitude: cusps[9], ...toDegreeMinute(cusps[9]) },
       });
-      radix.aspects();
+
+      const ASPECT_STYLE: Record<
+        string,
+        { degree: number; color: string; orbit: number }
+      > = {
+        conjunction: { degree: 0, color: '#B9AFC9', orbit: 8 },
+        semisextile: { degree: 30, color: '#B9AFC9', orbit: 2 },
+        semisquare: { degree: 45, color: '#C70039', orbit: 2 },
+        sextile: { degree: 60, color: '#3F8A5C', orbit: 6 },
+        square: { degree: 90, color: '#C70039', orbit: 8 },
+        trine: { degree: 120, color: '#3F8A5C', orbit: 8 },
+        sesquisquare: { degree: 135, color: '#C70039', orbit: 2 },
+        quincunx: { degree: 150, color: '#B9AFC9', orbit: 3 },
+        opposition: { degree: 180, color: '#C70039', orbit: 8 },
+      };
+
+      const positionByName: Record<string, number> = {};
+      chartData.planets.forEach((p) => {
+        positionByName[p.name] = p.longitude;
+      });
+
+      const customAspects = chartData.aspects
+        .filter((a) => ASPECT_STYLE[a.aspect])
+        .map((a) => ({
+          point: { name: a.planet1, position: positionByName[a.planet1] },
+          toPoint: { name: a.planet2, position: positionByName[a.planet2] },
+          aspect: { name: a.aspect, ...ASPECT_STYLE[a.aspect] },
+          precision: a.orb.toFixed(4),
+        }));
+      radix.aspects(customAspects);
     } catch (err) {
       console.error('Erro ao desenhar o mapa astral:', err);
       const message =
@@ -156,7 +209,7 @@ export function AstroChartWheel({
           : 'Não foi possível desenhar o mapa astral.';
       queueMicrotask(() => setDrawError(message));
     }
-  }, [chartData, containerId, drawSize]);
+  }, [chartData, containerId, drawSize, size]);
 
   return (
     <div className="flex flex-col items-center gap-3 py-2">

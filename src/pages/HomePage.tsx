@@ -35,6 +35,7 @@ import { FaqAccordion } from '../components/FaqAccordion';
 import { FloatingGlyphs } from '../components/FloatingGlyphs';
 import { HeroGenerateFlow } from '../components/HeroGenerateFlow';
 import { ChartResultView } from '../components/ChartResultView';
+import { CurrentEphemerisTable } from '../components/CurrentEphemerisTable';
 import { useGenerateFlow } from '../context/GenerateFlowContext';
 import { EXTERNAL_LINKS, FEATURED_REELS } from '../lib/external-links';
 import type { AstralChart } from '../types/charts';
@@ -46,6 +47,7 @@ export default function HomePage() {
       <HeroSection />
       <SignsSection />
       <HowItWorksSection />
+      <EphemerisSection />
       <FeaturesSection />
       <AboutSection />
       <BookSection />
@@ -322,6 +324,32 @@ function HowItWorksSection() {
             <Sparkles size={18} />
             Gere seu mapa astral gratuito
           </button>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function EphemerisSection() {
+  return (
+    <section id="efemerides" className="relative overflow-hidden bg-offwhite py-20 sm:py-28">
+      <FloatingGlyphs />
+      <div className="relative mx-auto max-w-3xl px-6">
+        <Reveal className="mb-10 text-center">
+          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-bronze">
+            Céu de hoje
+          </span>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-noturno sm:text-4xl">
+            Posições atuais dos planetas
+          </h2>
+          <p className="mx-auto mt-4 max-w-lg text-base text-ink-soft">
+            Confira as efemérides em tempo real: o signo e o grau em que cada
+            planeta se encontra neste exato momento.
+          </p>
+        </Reveal>
+
+        <Reveal delay={100}>
+          <CurrentEphemerisTable />
         </Reveal>
       </div>
     </section>
